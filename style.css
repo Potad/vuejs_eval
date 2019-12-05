@@ -1,0 +1,38 @@
+.right {
+    text-align: right;
+}
+
+.row:hover {
+    background-color: grey;
+}
+
+.footer {
+    display: flex;
+    justify-content: space-around;
+}
+
+.btn  {
+    display: flex;
+    flex-direction: column;
+}
+
+input[type=number] {
+    height: 30px;
+}
+
+.btn-add {
+    height: 30px;
+    background-color: #f6f5f4;
+    border: 1px solid;
+
+    border-radius: 5px;
+    color: #3b8070;
+}
+
+.tot {
+    background-color: #d6d8d9;
+    height: 30px;
+    margin-top: 5px;
+    padding: 10px;
+    border-radius: 5px;
+}

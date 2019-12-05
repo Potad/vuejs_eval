@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Evaluation Vuejs</title>
+  <link href="style.css" rel="stylesheet">
+</head>
+
+<div id="app">
+  <h1>{{titre}}</h1>
+    <h2 class="right">{{type}} {{date}}</h2>
+    <div class="tableau">
+        <table>
+            <tr>
+                <th>{{ id }}</th>
+                <th>{{ designation }}</th>
+                <th>{{ qt }}</th>
+                <th>{{ Pu_Ht }}</th>
+                <th>{{ tva }}</th>
+                <th>{{ P_Ht }}</th>
+                <th>{{P_TTC}}</th>
+
+            </tr>
+            <tr class="row" v-for="(i, index) in Bills" :key="index">
+                <td>{{index + 1}}</td>
+
+                <td><input type="text" v-model="Bills[index].designation"></td>
+
+                <td><input type="number" v-model="Bills[index].qte" @change="calcul_prix(index)"></td>
+
+                <td><input type="input" v-model="Bills[index].Pu_ht" @change="calcul_prix(index)"></td>
+
+                <td><input type="number" v-model="Bills[index].Tva" @change="calcul_prix(index)"></td>
+
+                <td><input type="input" v-model="Bills[index].P_Ht"></td>
+
+                <td><input type="input" v-model="Bills[index].P_Ttc"></td>
+
+                <td><button type="button" @click.prevent="deleteBill(index)">{{btnSupprimer}}</button></td>
+            </tr>
+
+            
+        </table>
+    </div>
+    <div class="footer">
+        <button type="button" class="btn-add" @click="addBill">{{btnAjouter}}</button>
+        <div class="btn">
+            <div clasinputs="tot">{{btnTotHt}} {{prixHt}}</div>
+            <div class="tot">{{btnTtc}}{{prixTtc}}</div>
+        </div>
+    </div>
+
+</div>
+
+<body>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script type="text/javascript">
+
+
+    var app = new Vue({
+      el: '#app',
+      data: {
+          titre: 'Evaluation Vuejs',
+          id: 'id',
+          designation: 'designation',
+          qt: "Qt",
+          Pu_Ht: 'Pu_Ht',
+          tva: 'tva',
+        P_Ht: 'P Ht',
+        P_TTC: 'P Ttc',
+          type: 'Facture',
+          date: 'du 1 Décembre 2019',
+          btnAjouter: '+ Ajouter une ligne',
+          btnSupprimer: 'X',
+          signeEuro : '€',
+          btnTotHt: 'Total HT : ',
+          btnTtc: 'Total TTC : ',
+          
+
+        newDesignation: '',
+        newQte : 0,
+        newPu_ht: 0,
+        newTva: 0,
+
+        longueur: 0,
+
+        Bills: []
+      }, 
+
+      methods :{
+          calcul_prix(i){
+                let ligne = this.Bills[i];
+                let ht = this.Bills[i].qte * this.Bills[i].Pu_ht;
+                let ttc = this.Bills[i].qte * this.Bills[i].Pu_ht * (1+this.Bills[i].Tva/100);
+                ligne.P_Ht = ht;
+                ligne.P_Ttc = ttc;
+          },
+
+          addBill: function () {
+              this.Bills.push({
+                id: this.longueur,
+                designation: this.newDesignation,
+                qte: this.newQte,
+                Pu_ht : this.newPu_ht,
+                Tva: this.newTva,
+                P_Ht: 0,
+               P_Ttc: 0
+              })
+
+
+          },
+
+          storage: function () {
+                if (window.localStorage) {
+                    localStorage.setItem('adele', JSON.stringify(this.Bills));
+                }
+
+            }, 
+
+          deleteBill: function (index) {
+            this.Bills.splice(index, 1);
+          }
+      }, 
+
+      computed: {
+          prixHt: function (){
+            let total = 0;
+            for(let i =0; i < this.Bills.length; i++) {
+                total = total + parseFloat(this.Bills[i].P_Ht);
+            }
+            console.log(total);
+            return total;    
+          },
+
+          prixTtc: function () {
+            let total = 0;
+            for(let i =0; i < this.Bills.length; i++) {
+                total = total + parseFloat(this.Bills[i].P_Ht * (1 + this.Bills[i].Tva/100));
+            }
+            return total; 
+          },
+
+      }, 
+
+      watch: {
+            Bills: {
+                handler: function(nouvelleLongueur, ancienneLongueur) {
+                this.longueur = this.Bills.filter((w) => w !== "").length;
+                this.storage();
+            },
+            deep: true
+        }            
+    },
+
+    mounted(){
+        //LocalStorage
+        let aaa = JSON.parse(localStorage.getItem('adele'));
+            if (aaa){
+                this.Bills = aaa;
+            } else {
+                this.Bills = [{
+            id: 1,
+            designation: 'adion',
+            qte: 3,
+            Pu_ht : 210,
+            Tva: 20, 
+            P_Ht: 756,
+            P_Ttc: 907.2
+        }];
+            }
+                
+        }
+
+    })
+  </script>
+</body>
+
+</html>
